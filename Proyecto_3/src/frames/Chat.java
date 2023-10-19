@@ -92,7 +92,7 @@ public class Chat extends javax.swing.JFrame implements Observer {
 
         this.txtArea.append(mensje);
 
-        Client client = new Client("", 5000, mensje);
+        Client client = new Client("192.168.100.21", 5000, mensje);
         Thread thread = new Thread(client);
         thread.start();
 

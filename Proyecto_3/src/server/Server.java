@@ -20,9 +20,11 @@ import java.util.logging.Logger;
 public class Server extends Observable implements Runnable {
 
     private int puerto;
+    private boolean seguir;
 
     public Server(int puerto) {
         this.puerto = puerto;
+        seguir = true;
     }
 
     @Override
@@ -34,12 +36,10 @@ public class Server extends Observable implements Runnable {
         try {
             server = new ServerSocket(this.puerto);
             System.out.println("Servidor iniciado" + puerto);
-
+            socket = server.accept();
+            System.out.println("Cliente conectado");
             //Siempre estará escuchando peticiones
-            while (true) {
-
-                socket = server.accept();
-                System.out.println("Cliente conectado");
+            while (seguir) {
 
                 in = new DataInputStream(socket.getInputStream());
 
@@ -51,11 +51,13 @@ public class Server extends Observable implements Runnable {
                 this.setChanged();
                 this.notifyObservers(mensaje);
                 this.clearChanged();
-
-                socket.close();
-                System.out.println("Cliente desconectado");
-
+                if (mensaje.equalsIgnoreCase("bye")) {
+                    seguir = false;
+                }
             }
+            socket.close();
+            System.out.println("Cliente desconectado");
+
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
